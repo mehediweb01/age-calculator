@@ -2,8 +2,38 @@ import { useState } from "react";
 
 function App() {
   const [input, setInput] = useState<string>("");
+  const [age, setAge] = useState<{
+    years: number;
+    months: number;
+    days: number;
+  } | null>(null);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!input) {
+      alert("Invalid date");
+      return;
+    }
+    const birthDate = new Date(input);
+    const today = new Date();
+
+    if (today < birthDate) {
+      alert("Invalid date");
+      return;
+    }
+
+    let years = today.getFullYear() - birthDate.getFullYear();
+    let months = today.getMonth() - birthDate.getMonth();
+    let days = today.getDate() - birthDate.getDate();
+    if (days < 0) {
+      months--;
+      const lastMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+      days += lastMonth.getDate();
+    }
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+    setAge({ years, months, days });
   };
   return (
     <>
@@ -33,7 +63,11 @@ function App() {
           </div>
           {/* showing result */}
           <div className="mt-3 shadow-sm shadow-sky-400">
-            <p className="font-semibold text-xl text-white">{input}</p>
+            <p className="font-semibold text-xl text-white space-x-4">
+              <span>{age?.years} years </span>
+              <span>{age?.months} Months</span>
+              <span>{age?.days} Days</span>
+            </p>
           </div>
         </div>
       </div>
